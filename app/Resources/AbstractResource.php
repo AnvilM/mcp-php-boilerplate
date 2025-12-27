@@ -8,47 +8,63 @@ use Mcp\Schema\ToolAnnotations;
 
 abstract class AbstractResource
 {
+
+    protected string $uri = "";
+
+    protected ?string $name = null;
+
+    protected ?string $description = null;
+
+    protected ?string $mimeType = null;
+
+    protected ?int $size = null;
+
+    protected ?ToolAnnotations $annotations = null;
+
+    protected ?array $icons = null;
+
+    protected ?array $meta = null;
+
     public function getUri(): string
     {
-        return "";
+        return $this->uri;
     }
-    
+
     public function getName(): ?string
     {
-        return null;
+        return $this->name;
     }
-    
+
     public function getDescription(): ?string
     {
-        return null;
+        return $this->description;
     }
-    
+
     public function getMimeType(): ?string
     {
-        return null;
+        return $this->mimeType;
     }
-    
+
     public function getSize(): ?int
     {
-        return null;
+        return $this->size;
     }
-    
+
     public function getAnnotations(): ?ToolAnnotations
     {
-        return null;
+        return $this->annotations;
     }
-    
-    
+
+
     public function getIcons(): ?array
     {
-        return null;
+        return $this->icons;
     }
-    
+
     public function getMeta(): ?array
     {
-        return null;
+        return $this->meta;
     }
 
 
-   
 }

@@ -4,32 +4,33 @@ declare(strict_types=1);
 
 namespace Application\Prompts;
 
-use Mcp\Schema\ToolAnnotations;
-
 abstract class AbstractPrompt
 {
+    protected ?string $name = null;
 
-    
+    protected ?string $description = null;
+
+    protected ?array $icons = null;
+
+    protected ?array $meta = null;
+
     public function getName(): ?string
     {
-        return null;
+        return $this->name;
     }
-    
+
     public function getDescription(): ?string
     {
-        return null;
-    }
-    
-
-
-    public function getIcons(): array
-    {
-        return [];
+        return $this->description;
     }
 
-
-    public function getMeta(): array
+    public function getIcons(): ?array
     {
-        return [];
+        return $this->icons;
+    }
+
+    public function getMeta(): ?array
+    {
+        return $this->meta;
     }
 }
