@@ -5,15 +5,17 @@ declare(strict_types=1);
 namespace Application\Bootstrappers;
 
 use DI\Container;
-use Psr\Container\ContainerInterface;
+use Mcp\Server\Builder;
 
 final readonly class ContainerBootstrapper
 {
     /** @param array<string, mixed> $providers */
-    public static function createContainer(array $providers): ContainerInterface
+    public static function registerContainer(Builder $builder, array $providers): void
     {
-        return new Container(
-            $providers
+        $builder->setContainer(
+            new Container(
+                $providers
+            )
         );
     }
 }
