@@ -1,0 +1,22 @@
+<phpunit
+        bootstrap="vendor/autoload.php"
+        colors="true"
+        failOnWarning="true"
+        failOnRisky="true"
+        beStrictAboutTestsThatDoNotTestAnything="true"
+        beStrictAboutOutputDuringTests="true"
+        executionOrder="depends,defects"
+        cacheResult="false"
+>
+    <testsuites>
+        <testsuite name="Test Suite">
+            <directory suffix="Test.php">./tests</directory>
+        </testsuite>
+    </testsuites>
+
+    <source>
+        <include>
+            <directory suffix=".php">src</directory>
+        </include>
+    </source>
+</phpunit>
