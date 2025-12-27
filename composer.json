@@ -1,6 +1,6 @@
 {
-  "name": "anvil/mcp-rr-boilerplate",
-  "description": "MCP RoadRunner boilerplate",
+  "name": "anvil/mcp-php-boilerplate",
+  "description": "MCP PHP boilerplate",
   "type": "project",
   "license": "MIT",
   "authors": [
