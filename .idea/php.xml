@@ -73,6 +73,8 @@
       <path value="$PROJECT_DIR$/vendor/opis/string" />
       <path value="$PROJECT_DIR$/vendor/psr/event-dispatcher" />
       <path value="$PROJECT_DIR$/vendor/psr/clock" />
+      <path value="$PROJECT_DIR$/vendor/nyholm/psr7" />
+      <path value="$PROJECT_DIR$/vendor/nyholm/psr7-server" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.5" />
