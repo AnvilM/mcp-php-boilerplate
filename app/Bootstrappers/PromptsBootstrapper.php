@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Application\Bootstrappers;
 
 use Application\Prompts\AbstractPrompt;
+use LogicException;
 use Mcp\Server\Builder;
 
 final class PromptsBootstrapper
@@ -17,6 +18,9 @@ final class PromptsBootstrapper
     public static function registerPrompts(Builder $builder): Builder
     {
         foreach (self::$prompts as $prompt) {
+            
+            self::assertPromptIsCallable($prompt);
+
             $builder->addPrompt(
                 $prompt,
                 $prompt->getName(),
@@ -27,5 +31,12 @@ final class PromptsBootstrapper
         }
 
         return $builder;
+    }
+
+    private static function assertPromptIsCallable(AbstractPrompt $prompt): void
+    {
+        if (!is_callable($prompt)) {
+            throw new LogicException("Prompt " . get_class($prompt) . " must be a callable");
+        }
     }
 }
