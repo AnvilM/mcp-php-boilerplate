@@ -24,4 +24,14 @@ final readonly class ApplicationConfig
     {
         return (bool)getenv("APP_DEBUG");
     }
+
+    public static function appName(): string
+    {
+        return (string)getenv("APP_NAME");
+    }
+
+    public static function appDescription(): string
+    {
+        return (string)getenv("APP_DESCRIPTION");
+    }
 }
