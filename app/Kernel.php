@@ -8,6 +8,7 @@ use Application\Bootstrappers\ContainerBootstrapper;
 use Application\Bootstrappers\PromptsBootstrapper;
 use Application\Bootstrappers\ProvidersBootstrapper;
 use Application\Bootstrappers\ResourcesBootstrapper;
+use Application\Bootstrappers\ServerBootstrapper;
 use Application\Bootstrappers\ToolsBootstrapper;
 use Mcp\Server;
 
@@ -15,20 +16,18 @@ final readonly class Kernel
 {
     public static function createServer(): Server
     {
-        $container = ContainerBootstrapper::createContainer(
-            ProvidersBootstrapper::getProviders()
-        );
+        $builder = Server::builder();
 
-        $builder = Server::builder()
-            ->setServerInfo("Example Server", "1.0.0", "Example MCP PHP Server")
-            ->setContainer($container);
+        ServerBootstrapper::bootstrap($builder);
+
+        ContainerBootstrapper::registerContainer($builder, ProvidersBootstrapper::getProviders());
 
         ToolsBootstrapper::registerTools($builder);
 
         ResourcesBootstrapper::registerResources($builder);
 
         PromptsBootstrapper::registerPrompts($builder);
-        
+
         return $builder->build();
     }
 }
