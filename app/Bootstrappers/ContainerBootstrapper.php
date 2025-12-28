@@ -10,12 +10,12 @@ use Mcp\Server\Builder;
 final readonly class ContainerBootstrapper
 {
     /** @param array<string, mixed> $providers */
-    public static function registerContainer(Builder $builder, array $providers): void
+    public static function registerContainer(Builder $builder, array $providers): Container
     {
-        $builder->setContainer(
-            new Container(
-                $providers
-            )
-        );
+        $container = new Container($providers);
+
+        $builder->setContainer($container);
+        
+        return $container;
     }
 }
