@@ -7,6 +7,7 @@ namespace Application\Bootstrappers;
 use Application\Config\ApplicationConfig\ApplicationConfig;
 use Mcp\Schema\ServerCapabilities;
 use Mcp\Server\Builder;
+use Mcp\Server\Session\FileSessionStore;
 
 final readonly class ServerBootstrapper
 {
@@ -16,7 +17,11 @@ final readonly class ServerBootstrapper
             ApplicationConfig::appName(),
             ApplicationConfig::appDescription()
         )->setCapabilities(
-            new ServerCapabilities(tools: true)
+            new ServerCapabilities()
+        )->setSession(
+            new FileSessionStore(
+                ApplicationConfig::baseDir() . '/sessions'
+            )
         );
     }
 }
