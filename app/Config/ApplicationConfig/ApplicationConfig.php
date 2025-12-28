@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Application\Config\ApplicationConfig;
 
+use function Env\env;
+
 final readonly class ApplicationConfig
 {
     public static function baseDir(): string
@@ -13,7 +15,7 @@ final readonly class ApplicationConfig
 
     public static function appEnv(): ApplicationEnvironmentEnum
     {
-        return match (getenv('APP_ENV')) {
+        return match (env('APP_ENV')) {
             'production' => ApplicationEnvironmentEnum::Production,
             'testing' => ApplicationEnvironmentEnum::Testing,
             default => ApplicationEnvironmentEnum::Development
@@ -22,16 +24,16 @@ final readonly class ApplicationConfig
 
     public static function appDebug(): bool
     {
-        return (bool)getenv("APP_DEBUG");
+        return (bool)env("APP_DEBUG");
     }
 
     public static function appName(): string
     {
-        return (string)getenv("APP_NAME");
+        return (string)env("APP_NAME");
     }
 
     public static function appDescription(): string
     {
-        return (string)getenv("APP_DESCRIPTION");
+        return (string)env("APP_DESCRIPTION");
     }
 }
