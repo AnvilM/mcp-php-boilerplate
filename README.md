@@ -510,8 +510,8 @@ The project is distributed under the MIT License. For details, refer to the [LIC
 
 [phpstan-link]: https://github.com/AnvilM/mcp-php-boilerplate/
 
-[phpstan-shield]: https://img.shields.io/badge/PHPStan-Level%20max-blue?logo=php&labelColor=black&style=flat-square
+[phpstan-shield]: https://img.shields.io/badge/PHPStan-Level%208-blue?logo=php&labelColor=black&style=flat-square
 
 [php-version-link]: https://github.com/AnvilM/mcp-php-boilerplate/
 
-[php-version-shield]: https://img.shields.io/badge/PHP-8.4-blue?logo=php&labelColor=black&style=flat-square
+[php-version-shield]: https://img.shields.io/badge/PHP-8.5-blue?logo=php&labelColor=black&style=flat-square
