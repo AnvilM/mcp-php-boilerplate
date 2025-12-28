@@ -12,12 +12,12 @@ use Mcp\Schema\Request\ReadResourceRequest;
 use Mcp\Schema\Result\ReadResourceResult;
 use Mcp\Server\Session\SessionInterface;
 
-final class Test extends AbstractResource
+final class ExampleResource extends AbstractResource
 {
 
-    protected string $name = "test";
+    protected string $name = "example_resource";
 
-    protected string $uri = "config://test";
+    protected string $uri = "example://example";
 
     protected ?string $mimeType = "text/plain";
 

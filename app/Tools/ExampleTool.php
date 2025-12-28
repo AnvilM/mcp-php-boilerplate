@@ -12,7 +12,7 @@ use Mcp\Schema\Request\CallToolRequest;
 use Mcp\Schema\Result\CallToolResult;
 use Mcp\Server\Session\SessionInterface;
 
-final class SumTool extends AbstractTool
+final class ExampleTool extends AbstractTool
 {
     protected string $name = 'example_tool';
 
