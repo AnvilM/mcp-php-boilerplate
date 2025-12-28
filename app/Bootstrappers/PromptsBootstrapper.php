@@ -4,39 +4,33 @@ declare(strict_types=1);
 
 namespace Application\Bootstrappers;
 
-use Application\Prompts\AbstractPrompt;
-use LogicException;
+use Application\Platform\Collections\PromptsCollection;
+use Application\Platform\Handlers\Prompt\GetPromptHandler;
+use Application\Platform\Handlers\Prompt\ListPromptsHandler;
+use Application\Registry\Prompts;
+use DI\Container;
 use Mcp\Server\Builder;
 
 final class PromptsBootstrapper
 {
-    /** @var array<AbstractPrompt> * */
-    private static array $prompts = [
-
-    ];
-
-    public static function registerPrompts(Builder $builder): Builder
+    public static function registerPrompts(Builder $builder, Container $container): void
     {
-        foreach (self::$prompts as $prompt) {
-            
-            self::assertPromptIsCallable($prompt);
+        $prompts = self::getPrompts($container);
 
-            $builder->addPrompt(
-                $prompt,
-                $prompt->getName(),
-                $prompt->getDescription(),
-                $prompt->getIcons(),
-                $prompt->getMeta()
-            );
-        }
-
-        return $builder;
+        $builder->addRequestHandlers([
+            new ListPromptsHandler($prompts),
+            new GetPromptHandler($prompts)
+        ]);
     }
 
-    private static function assertPromptIsCallable(AbstractPrompt $prompt): void
+    private static function getPrompts(Container $container): PromptsCollection
     {
-        if (!is_callable($prompt)) {
-            throw new LogicException("Prompt " . get_class($prompt) . " must be a callable");
+        $prompts = new PromptsCollection([]);
+
+        foreach (Prompts::$prompts as $prompt) {
+            $prompts->push($container->get($prompt));
         }
+
+        return $prompts;
     }
 }
