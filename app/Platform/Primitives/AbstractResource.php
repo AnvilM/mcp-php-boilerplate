@@ -1,25 +1,28 @@
-<?php
+<?php /** @noinspection ALL */
 
 declare(strict_types=1);
 
-namespace Application\Resources;
+namespace Application\Platform\Primitives;
 
+use Mcp\Schema\JsonRpc\Error;
+use Mcp\Schema\JsonRpc\Response;
+use Mcp\Schema\Request\ReadResourceRequest;
+use Mcp\Schema\Resource;
 use Mcp\Schema\ToolAnnotations;
+use Mcp\Server\Session\SessionInterface;
 
 abstract class AbstractResource
 {
 
     protected string $uri = "";
 
-    protected ?string $name = null;
+    protected string $name = "";
 
     protected ?string $description = null;
 
     protected ?string $mimeType = null;
 
     protected ?int $size = null;
-
-    protected ?ToolAnnotations $annotations = null;
 
     protected ?array $icons = null;
 
@@ -50,12 +53,6 @@ abstract class AbstractResource
         return $this->size;
     }
 
-    public function getAnnotations(): ?ToolAnnotations
-    {
-        return $this->annotations;
-    }
-
-
     public function getIcons(): ?array
     {
         return $this->icons;
@@ -64,6 +61,27 @@ abstract class AbstractResource
     public function getMeta(): ?array
     {
         return $this->meta;
+    }
+
+    public abstract function __invoke(ReadResourceRequest $request, SessionInterface $session): Response|Error;
+
+    public function toSchemaResource(): Resource
+    {
+        return new Resource(
+            $this->uri,
+            $this->name,
+            $this->description,
+            $this->mimeType,
+            $this->getAnnotations(),
+            $this->size,
+            $this->icons,
+            $this->meta
+        );
+    }
+
+    public function getAnnotations(): ?ToolAnnotations
+    {
+        return null;
     }
 
 

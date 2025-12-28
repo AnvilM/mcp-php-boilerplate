@@ -2,20 +2,23 @@
 
 declare(strict_types=1);
 
-namespace Application\Tools;
+namespace Application\Platform\Primitives;
 
+use Mcp\Schema\JsonRpc\Error;
+use Mcp\Schema\JsonRpc\Response;
+use Mcp\Schema\Request\CallToolRequest;
+use Mcp\Schema\Tool;
 use Mcp\Schema\ToolAnnotations;
+use Mcp\Server\Session\SessionInterface;
 
 abstract class AbstractTool
 {
 
-    protected ?string $name = null;
+    protected string $name;
+
+    protected array $inputSchema;
 
     protected ?string $description = null;
-
-    protected ?ToolAnnotations $annotations = null;
-
-    protected ?array $inputSchema = null;
 
     protected ?array $icons = null;
 
@@ -33,7 +36,7 @@ abstract class AbstractTool
 
     public function getAnnotations(): ?ToolAnnotations
     {
-        return $this->annotations;
+        return null;
     }
 
     public function getInputSchema(): ?array
@@ -51,5 +54,18 @@ abstract class AbstractTool
     public function getMeta(): ?array
     {
         return $this->meta;
+    }
+
+    public abstract function __invoke(CallToolRequest $request, SessionInterface $session): Response|Error;
+
+    public function toSchemaTool(): Tool
+    {
+        return new Tool(
+            $this->name,
+            $this->inputSchema,
+            $this->description,
+            $this->icons,
+            $this->meta
+        );
     }
 }

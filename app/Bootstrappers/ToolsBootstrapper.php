@@ -2,25 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Application\Bootstrappers;
+namespace Application\Bootstrappers\ToolsBootstrapper;
 
-use Application\Tools\AbstractTool;
-use LogicException;
+use DI\Container;
 use Mcp\Server\Builder;
 
 final class ToolsBootstrapper
 {
-    /** @var array<AbstractTool> * */
-    private static array $tools = [
 
-    ];
-
-    public static function registerTools(Builder $builder): Builder
+    public static function registerTools(Builder $builder, Container $container): Builder
     {
-        foreach (self::$tools as $tool) {
-
-            self::assertToolIsCallable($tool);
-
+        foreach (new ToolsRegistry($container)->tools as $tool) {
             $builder->addTool(
                 $tool,
                 $tool->getName(),
@@ -35,10 +27,5 @@ final class ToolsBootstrapper
         return $builder;
     }
 
-    private static function assertToolIsCallable(AbstractTool $tool): void
-    {
-        if (!is_callable($tool)) {
-            throw new LogicException("Tool " . get_class($tool) . " must be a callable");
-        }
-    }
+
 }
