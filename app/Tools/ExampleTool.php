@@ -6,7 +6,6 @@ namespace Application\Tools;
 
 use Application\Platform\Primitives\AbstractTool;
 use Mcp\Schema\Content\TextContent;
-use Mcp\Schema\JsonRpc\Error;
 use Mcp\Schema\JsonRpc\Response;
 use Mcp\Schema\Request\CallToolRequest;
 use Mcp\Schema\Result\CallToolResult;
@@ -26,7 +25,7 @@ final class ExampleTool extends AbstractTool
         'required' => ['name']
     ];
 
-    public function __invoke(CallToolRequest $request, SessionInterface $session): Response|Error
+    public function __invoke(CallToolRequest $request, SessionInterface $session): Response
     {
         return new Response(
             $request->getId(),
