@@ -2,36 +2,36 @@
 
 declare(strict_types=1);
 
-namespace Application\Platform\Handlers\Tool;
+namespace Application\Platform\Handlers\Resource;
 
-use Application\Platform\Collections\ToolCollection;
+use Application\Platform\Collections\ResourcesCollection;
 use Mcp\Schema\JsonRpc\Error;
 use Mcp\Schema\JsonRpc\Request;
 use Mcp\Schema\JsonRpc\Response;
-use Mcp\Schema\Request\CallToolRequest;
+use Mcp\Schema\Request\ReadResourceRequest;
 use Mcp\Server\Handler\Request\RequestHandlerInterface;
 use Mcp\Server\Session\SessionInterface;
 
-final readonly class CallToolHandler implements RequestHandlerInterface
+final readonly class ReadResourceHandler implements RequestHandlerInterface
 {
-    public function __construct(private ToolCollection $tools)
+    public function __construct(private ResourcesCollection $resources)
     {
     }
 
     public function supports(Request $request): bool
     {
-        return $request instanceof CallToolRequest;
+        return $request instanceof ReadResourceRequest;
     }
 
     public function handle(Request $request, SessionInterface $session): Response|Error
     {
-        assert($request instanceof CallToolRequest);
+        assert($request instanceof ReadResourceRequest);
 
-        $tool = $this->tools->findByName($request->name);
+        $resource = $this->resources->findByUri($request->uri);
 
-        return $tool === null
+        return $resource === null
             ? new Error($request->getId(), Error::METHOD_NOT_FOUND, "not found")
-            : $tool($request, $session);
+            : $resource($request, $session);
 
 
     }

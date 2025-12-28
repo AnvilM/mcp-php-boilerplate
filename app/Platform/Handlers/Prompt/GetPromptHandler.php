@@ -2,36 +2,36 @@
 
 declare(strict_types=1);
 
-namespace Application\Platform\Handlers\Tool;
+namespace Application\Platform\Handlers\Prompt;
 
-use Application\Platform\Collections\ToolCollection;
+use Application\Platform\Collections\PromptsCollection;
 use Mcp\Schema\JsonRpc\Error;
 use Mcp\Schema\JsonRpc\Request;
 use Mcp\Schema\JsonRpc\Response;
-use Mcp\Schema\Request\CallToolRequest;
+use Mcp\Schema\Request\GetPromptRequest;
 use Mcp\Server\Handler\Request\RequestHandlerInterface;
 use Mcp\Server\Session\SessionInterface;
 
-final readonly class CallToolHandler implements RequestHandlerInterface
+final readonly class GetPromptHandler implements RequestHandlerInterface
 {
-    public function __construct(private ToolCollection $tools)
+    public function __construct(private PromptsCollection $prompts)
     {
     }
 
     public function supports(Request $request): bool
     {
-        return $request instanceof CallToolRequest;
+        return $request instanceof GetPromptRequest;
     }
 
     public function handle(Request $request, SessionInterface $session): Response|Error
     {
-        assert($request instanceof CallToolRequest);
+        assert($request instanceof GetPromptRequest);
 
-        $tool = $this->tools->findByName($request->name);
+        $prompt = $this->prompts->findByName($request->name);
 
-        return $tool === null
+        return $prompt === null
             ? new Error($request->getId(), Error::METHOD_NOT_FOUND, "not found")
-            : $tool($request, $session);
+            : $prompt($request, $session);
 
 
     }

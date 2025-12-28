@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Application\Platform\Handlers\Tool;
 
-use Application\Platform\Collections\ToolCollection;
+use Application\Platform\Collections\ToolsCollection;
 use Mcp\Schema\JsonRpc\Error;
 use Mcp\Schema\JsonRpc\Request;
 use Mcp\Schema\JsonRpc\Response;
@@ -12,9 +12,9 @@ use Mcp\Schema\Request\CallToolRequest;
 use Mcp\Server\Handler\Request\RequestHandlerInterface;
 use Mcp\Server\Session\SessionInterface;
 
-final readonly class CallToolRequestHandler implements RequestHandlerInterface
+final readonly class CallToolHandler implements RequestHandlerInterface
 {
-    public function __construct(private ToolCollection $tools)
+    public function __construct(private ToolsCollection $tools)
     {
     }
 
