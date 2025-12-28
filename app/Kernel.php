@@ -18,9 +18,9 @@ final readonly class Kernel
     {
         $builder = Server::builder();
 
-        ServerBootstrapper::bootstrap($builder);
-
         $container = ContainerBootstrapper::registerContainer($builder, ProvidersBootstrapper::getProviders());
+
+        ServerBootstrapper::bootstrap($builder, $container);
 
         ToolsBootstrapper::registerTools($builder, $container);
 
