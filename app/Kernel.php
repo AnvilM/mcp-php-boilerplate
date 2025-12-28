@@ -20,13 +20,13 @@ final readonly class Kernel
 
         ServerBootstrapper::bootstrap($builder);
 
-        ContainerBootstrapper::registerContainer($builder, ProvidersBootstrapper::getProviders());
+        $container = ContainerBootstrapper::registerContainer($builder, ProvidersBootstrapper::getProviders());
 
-        ToolsBootstrapper::registerTools($builder);
+        ToolsBootstrapper::registerTools($builder, $container);
 
-        ResourcesBootstrapper::registerResources($builder);
+        ResourcesBootstrapper::registerResources($builder, $container);
 
-        PromptsBootstrapper::registerPrompts($builder);
+        PromptsBootstrapper::registerPrompts($builder, $container);
 
         return $builder->build();
     }
