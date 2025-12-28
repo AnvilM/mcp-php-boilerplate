@@ -34,22 +34,15 @@ abstract class AbstractTool
         return $this->description;
     }
 
-    public function getAnnotations(): ?ToolAnnotations
-    {
-        return null;
-    }
-
-    public function getInputSchema(): ?array
+    public function getInputSchema(): array
     {
         return $this->inputSchema;
     }
-
 
     public function getIcons(): ?array
     {
         return $this->icons;
     }
-
 
     public function getMeta(): ?array
     {
@@ -64,8 +57,14 @@ abstract class AbstractTool
             $this->name,
             $this->inputSchema,
             $this->description,
+            $this->getAnnotations(),
             $this->icons,
             $this->meta
         );
+    }
+
+    public function getAnnotations(): ?ToolAnnotations
+    {
+        return null;
     }
 }
