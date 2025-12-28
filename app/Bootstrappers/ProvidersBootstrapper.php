@@ -4,21 +4,10 @@ declare(strict_types=1);
 
 namespace Application\Bootstrappers;
 
-use Application\Providers\ApplicationProviders\LoggerProvider;
-use Application\Providers\ProviderInterface;
+use Application\Registry\Providers;
 
 final class ProvidersBootstrapper
 {
-
-    /** @var array<class-string<ProviderInterface>> */
-    private static array $providers = [
-
-    ];
-
-    /** @var array<class-string<ProviderInterface>> */
-    private static array $appProviders = [
-        LoggerProvider::class
-    ];
 
     /** @return array<string, mixed> */
     public static function getProviders(): array
@@ -26,7 +15,7 @@ final class ProvidersBootstrapper
         return array_merge(
             ...array_map(
                 fn($provider) => $provider::register(),
-                array_merge(self::$appProviders, self::$providers)
+                array_merge(Providers::$appProviders, Providers::$providers)
             )
         );
     }

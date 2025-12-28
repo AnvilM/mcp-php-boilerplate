@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Application\Providers\ApplicationProviders;
 
 use Application\Config\LoggerConfig\LoggerConfig;
-use Application\Providers\ProviderInterface;
+use Application\Platform\Interfaces\ProviderInterface;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
