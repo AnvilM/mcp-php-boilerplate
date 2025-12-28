@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Application\Registry;
 
-use Application\Platform\Primitives\AbstractTool;
-use Application\Tools\ExampleTool;
+use Application\Platform\Primitives\AbstractPrompt;
+use Application\Prompts\ExamplePrompt;
 
-final class Tools
+final class Prompts
 {
-    /** @var array<class-string<AbstractTool>> */
-    public static array $tools = [
-        ExampleTool::class
+    /** @var array<class-string<AbstractPrompt>> */
+    public static array $prompts = [
+        ExamplePrompt::class
     ];
 }

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Application\Tools;
+namespace Application\Registry;
 
-use Application\Platform\Primitives\Tools\AbstractTool;
-use Application\Tools\Tools\SumTool;
+use Application\Platform\Primitives\AbstractTool;
+use Application\Tools\ExampleTool;
 
-final class ToolsRegistry
+final class Tools
 {
     /** @var array<class-string<AbstractTool>> */
-    public static array $toolsRegistry = [
-        SumTool::class
+    public static array $tools = [
+        ExampleTool::class
     ];
 }
