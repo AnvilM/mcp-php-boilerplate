@@ -35,6 +35,14 @@
     "phpstan/phpstan": "^2.1",
     "phpunit/phpunit": "^12.5"
   },
+  "scripts": {
+    "test": "vendor/bin/pest",
+    "analyse": "vendor/bin/phpstan analyse --memory-limit=1G",
+    "check": [
+      "@analyse",
+      "@test"
+    ]
+  },
   "config": {
     "allow-plugins": {
       "php-http/discovery": true
