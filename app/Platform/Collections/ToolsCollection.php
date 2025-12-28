@@ -7,7 +7,7 @@ namespace Application\Platform\Collections;
 use Application\Platform\Primitives\AbstractTool;
 use InvalidArgumentException;
 
-final class ToolCollection
+final class ToolsCollection
 {
     /** @var array<AbstractTool> */
     private array $tools = [];

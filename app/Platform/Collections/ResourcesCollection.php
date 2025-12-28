@@ -7,7 +7,7 @@ namespace Application\Platform\Collections;
 use Application\Platform\Primitives\AbstractResource;
 use InvalidArgumentException;
 
-final class ResourceCollection
+final class ResourcesCollection
 {
     /** @var array<AbstractResource> */
     private array $resources = [];

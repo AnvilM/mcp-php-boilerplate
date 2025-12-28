@@ -7,7 +7,7 @@ namespace Application\Platform\Collections;
 use Application\Platform\Primitives\AbstractPrompt;
 use InvalidArgumentException;
 
-final class PromptCollection
+final class PromptsCollection
 {
     /** @var array<AbstractPrompt> */
     private array $prompts = [];
