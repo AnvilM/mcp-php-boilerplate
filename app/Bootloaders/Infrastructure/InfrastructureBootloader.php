@@ -17,7 +17,7 @@ use DI\Container as DIContainer;
 final readonly class InfrastructureBootloader implements BootloaderInterface
 {
     /**
-     * Creates and configures the DI container, then places it into the context.
+     * Creates and configures DI container, and environment variables then places DI Container into the context.
      *
      * @param Context<array{}> $context Empty initial context
      *
@@ -28,6 +28,8 @@ final readonly class InfrastructureBootloader implements BootloaderInterface
         $container = Container::createContainer(
             Providers::getProviders()
         );
+
+        Environment::load();
 
         return new Context([
             "container" => $container,

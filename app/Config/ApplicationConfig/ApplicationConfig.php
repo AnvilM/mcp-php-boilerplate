@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Application\Config\ApplicationConfig;
 
-use function Env\env;
-
 /**
  * Application configuration.
  *
@@ -33,7 +31,7 @@ final readonly class ApplicationConfig
      */
     public static function appEnv(): ApplicationEnvironmentEnum
     {
-        return match (env('APP_ENV')) {
+        return match ($_ENV["APP_ENV"]) {
             'production' => ApplicationEnvironmentEnum::Production,
             'testing' => ApplicationEnvironmentEnum::Testing,
             default => ApplicationEnvironmentEnum::Development,
@@ -47,7 +45,7 @@ final readonly class ApplicationConfig
      */
     public static function appDebug(): bool
     {
-        return (bool)env('APP_DEBUG');
+        return (bool)$_ENV["APP_DEBUG"];
     }
 
     /**
@@ -57,7 +55,7 @@ final readonly class ApplicationConfig
      */
     public static function appName(): string
     {
-        return (string)env('APP_NAME');
+        return (string)$_ENV["APP_NAME"];
     }
 
     /**
@@ -67,6 +65,6 @@ final readonly class ApplicationConfig
      */
     public static function appDescription(): string
     {
-        return (string)env('APP_DESCRIPTION');
+        return (string)$_ENV["APP_DESCRIPTION"];
     }
 }
