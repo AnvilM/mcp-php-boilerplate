@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Application\Registry;
+namespace Application\Providers;
 
 
-use Application\Platform\Interfaces\ProviderInterface;
 use Application\Providers\ApplicationProviders\LoggerProvider;
 
 /**

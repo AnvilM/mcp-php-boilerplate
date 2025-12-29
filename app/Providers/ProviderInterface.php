@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Application\Platform\Interfaces;
+namespace Application\Providers;
 
 
 /**

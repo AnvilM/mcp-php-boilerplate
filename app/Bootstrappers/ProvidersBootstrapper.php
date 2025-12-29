@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Application\Bootstrappers;
 
-use Application\Registry\Providers;
+use Application\Providers\Providers;
 
 /**
  * Providers bootstrapper.
