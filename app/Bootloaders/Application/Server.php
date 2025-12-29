@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Application\Bootloaders\Application;
 
 use Application\Config\ApplicationConfig\ApplicationConfig;
+use DI\Container as DiContainer;
 use Mcp\Schema\ServerCapabilities;
 use Mcp\Server as McpServer;
-use Mcp\Server\Session\FileSessionStore;
+use Mcp\Server\Session\InMemorySessionStore;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -25,17 +26,18 @@ final readonly class Server
      * and resolves the logger instance from the DI container.
      *
      * @param LoggerInterface $logger Logger
+     * @param DiContainer $container Dependency injection container
      *
      * @return McpServer
-     *
      */
-    public static function create(LoggerInterface $logger): McpServer
+    public static function create(LoggerInterface $logger, DiContainer $container): McpServer
     {
         return McpServer::builder()
-            ->setSession(new FileSessionStore(ApplicationConfig::baseDir() . '/sessions'))
+            ->setDiscovery(ApplicationConfig::baseDir() . "/app/", ['Tools', 'Resources', 'Prompts'])
             ->setServerInfo(ApplicationConfig::appName(), ApplicationConfig::appDescription())
-            ->setDiscovery(ApplicationConfig::baseDir(), ['/Tools', '/Resources', '/Prompts'])
             ->setCapabilities(new ServerCapabilities())
+            ->setSession(new InMemorySessionStore())
+            ->setContainer($container)
             ->setLogger($logger)
             ->build();
 

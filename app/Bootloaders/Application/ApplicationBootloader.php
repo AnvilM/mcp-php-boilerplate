@@ -37,7 +37,7 @@ final readonly class ApplicationBootloader implements BootloaderInterface
         /** @var LoggerInterface $logger */
         $logger = $container->get(LoggerInterface::class);
 
-        $server = Server::create($logger);
+        $server = Server::create($logger, $container);
 
         return new Context([
             'server' => $server,
