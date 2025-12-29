@@ -24,10 +24,11 @@ final readonly class ApplicationBootloader implements BootloaderInterface
      * Creates the MCP server instance using the logger resolved from the DI container.
      *
      * @param Context<array{container: DIContainer}> $context Context containing the DI container
-     * @return Context<array{server: McpServer}> Context with initialized server instance
      *
      * @throws DependencyException Error while resolving the entry.
      * @throws NotFoundException No entry found for the given name
+     *
+     * @return Context<array{server: McpServer}> Context with initialized server instance
      */
     public static function boot(Context $context): Context
     {

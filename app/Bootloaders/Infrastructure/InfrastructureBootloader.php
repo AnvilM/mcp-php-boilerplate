@@ -20,6 +20,7 @@ final readonly class InfrastructureBootloader implements BootloaderInterface
      * Creates and configures the DI container, then places it into the context.
      *
      * @param Context<array{}> $context Empty initial context
+     *
      * @return Context<array{container: DIContainer}> Context with initialized container
      */
     public static function boot(Context $context): Context

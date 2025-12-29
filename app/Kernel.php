@@ -11,7 +11,6 @@ use DI\DependencyException;
 use DI\NotFoundException;
 use Mcp\Server as McpServer;
 
-
 /**
  * Application kernel.
  *
@@ -26,11 +25,12 @@ final readonly class Kernel
      * This method initializes the server builder, registers the DI container,
      * bootstraps core services, and registers tools, resources, and prompts.
      *
-     * @return McpServer Fully configured server instance
      *
      *
      * @throws DependencyException Error while resolving the entry.
      * @throws NotFoundException No entry found for the given name
+     *
+     * @return McpServer Fully configured server instance
      */
     public static function createServer(): McpServer
     {

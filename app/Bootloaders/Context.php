@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Application\Bootloaders;
 
 use OutOfBoundsException;
@@ -44,10 +46,12 @@ final readonly class Context
      * Throws if the key does not exist — this ensures type safety via PHPStan.
      *
      * @template TKey as key-of<T>
+     *
      * @param TKey $key The key to retrieve
-     * @return T[TKey] The value associated with the key
      *
      * @throws OutOfBoundsException If the key is not present in the context
+     *
+     * @return T[TKey] The value associated with the key
      */
     public function get(string $key): mixed
     {
@@ -64,13 +68,15 @@ final readonly class Context
      *
      * @template K as string
      * @template V as mixed
+     *
      * @param K $key The key to add or update
      * @param V $value The value to associate with the key
-     * @return Context<T & array{K: V}> A new context instance with the added/updated key
+     *
+     * @return Context<array{K: V}&T> A new context instance with the added/updated key
      */
     public function with(string $key, mixed $value): self
     {
-        /** @var Context<T & array{K: V}> $newContext */
+        /** @var Context<array{K: V}&T> $newContext */
         $newContext = new self([...$this->data, $key => $value]);
 
         return $newContext;

@@ -19,6 +19,7 @@ interface BootloaderInterface
      * Consumes values from the input context and produces new ones in the output context.
      *
      * @param Context<TInput> $context The incoming context with required dependencies
+     *
      * @return Context<TOutput> A new context enriched with new values provided by this bootloader
      */
     public static function boot(Context $context): Context;

@@ -18,7 +18,6 @@ use Psr\Log\LoggerInterface;
  */
 final readonly class LoggerProvider implements ProviderInterface
 {
-
     /**
      * Registers services in the container.
      *
@@ -36,7 +35,8 @@ final readonly class LoggerProvider implements ProviderInterface
                 LoggerConfig::level(),
                 true,
                 0777
-            )->setFormatter(new LineFormatter(
+            )->setFormatter(
+                new LineFormatter(
                     null,
                     'Y-m-d H:i:s',
                     false,

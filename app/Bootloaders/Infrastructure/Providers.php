@@ -26,7 +26,7 @@ final class Providers
     {
         return array_merge(
             ...array_map(
-                static fn(string $provider): array => $provider::register(),
+                static fn (string $provider): array => $provider::register(),
                 array_merge(Registry::$appProviders, Registry::$providers)
             )
         );

@@ -28,7 +28,6 @@ final readonly class Server
      * @param LoggerInterface $logger Logger
      * @param DiContainer $container Dependency injection container
      *
-     * @return McpServer
      */
     public static function create(LoggerInterface $logger, DiContainer $container): McpServer
     {
