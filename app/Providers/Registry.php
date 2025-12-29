@@ -12,7 +12,7 @@ use Application\Providers\ApplicationProviders\LoggerProvider;
  *
  * This class holds static lists of provider classes.
  */
-final class Providers
+final class Registry
 {
     /**
      * List of general provider classes.

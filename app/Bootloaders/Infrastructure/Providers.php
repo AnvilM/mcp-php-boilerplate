@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Application\Bootstrappers;
+namespace Application\Bootloaders\Infrastructure;
 
-use Application\Providers\Providers;
+use Application\Providers\Registry;
 
 /**
  * Providers bootstrapper.
@@ -12,7 +12,7 @@ use Application\Providers\Providers;
  * Responsible for collecting and merging provider definitions
  * for container initialization.
  */
-final class ProvidersBootstrapper
+final class Providers
 {
     /**
      * Returns all provider definitions.
@@ -27,7 +27,7 @@ final class ProvidersBootstrapper
         return array_merge(
             ...array_map(
                 static fn(string $provider): array => $provider::register(),
-                array_merge(Providers::$appProviders, Providers::$providers)
+                array_merge(Registry::$appProviders, Registry::$providers)
             )
         );
     }

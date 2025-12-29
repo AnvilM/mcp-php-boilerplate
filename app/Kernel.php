@@ -4,15 +4,12 @@ declare(strict_types=1);
 
 namespace Application;
 
-use Application\Bootstrappers\ContainerBootstrapper;
-use Application\Bootstrappers\PromptsBootstrapper;
-use Application\Bootstrappers\ProvidersBootstrapper;
-use Application\Bootstrappers\ResourcesBootstrapper;
-use Application\Bootstrappers\ServerBootstrapper;
-use Application\Bootstrappers\ToolsBootstrapper;
+use Application\Bootloaders\Application\ApplicationBootloader;
+use Application\Bootloaders\Context;
+use Application\Bootloaders\Infrastructure\InfrastructureBootloader;
 use DI\DependencyException;
 use DI\NotFoundException;
-use Mcp\Server;
+use Mcp\Server as McpServer;
 
 
 /**
@@ -29,25 +26,18 @@ final readonly class Kernel
      * This method initializes the server builder, registers the DI container,
      * bootstraps core services, and registers tools, resources, and prompts.
      *
-     * @return Server Fully configured server instance
+     * @return McpServer Fully configured server instance
      *
-     * @throws NotFoundException   No entry found for the given identifier
-     * @throws DependencyException Error while resolving a container entry
+     *
+     * @throws DependencyException Error while resolving the entry.
+     * @throws NotFoundException No entry found for the given name
      */
-    public static function createServer(): Server
+    public static function createServer(): McpServer
     {
-        $builder = Server::builder();
-
-        $container = ContainerBootstrapper::registerContainer($builder, ProvidersBootstrapper::getProviders());
-
-        ServerBootstrapper::bootstrap($builder, $container);
-
-        ToolsBootstrapper::registerTools($builder, $container);
-
-        ResourcesBootstrapper::registerResources($builder, $container);
-
-        PromptsBootstrapper::registerPrompts($builder, $container);
-
-        return $builder->build();
+        return ApplicationBootloader::boot(
+            InfrastructureBootloader::boot(
+                new Context()
+            )
+        )->get('server');
     }
 }
