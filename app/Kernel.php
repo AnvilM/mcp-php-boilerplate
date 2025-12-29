@@ -35,12 +35,13 @@ final readonly class Kernel
      */
     public static function createServer(): McpServer
     {
-        /** @var Context<array{server: McpServer}> $applicationContext */
-        $applicationContext = ApplicationBootloader::boot(new Context([]));
-
         /** @var Context<array{container: DIContainer}> $infrastructureContext */
-        $infrastructureContext = InfrastructureBootloader::boot($applicationContext);
-        
-        return $infrastructureContext->get('server');
+        $infrastructureContext = InfrastructureBootloader::boot(new Context());
+
+        /** @var Context<array{server: McpServer}> $applicationContext */
+        $applicationContext = ApplicationBootloader::boot($infrastructureContext);
+
+
+        return $applicationContext->get('server');
     }
 }
