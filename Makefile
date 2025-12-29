@@ -1,5 +1,6 @@
 analyse:
 	vendor/bin/phpstan --memory-limit=-1
 
-tests:
+test:
 	vendor/bin/pest
+	
