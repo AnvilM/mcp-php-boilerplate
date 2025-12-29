@@ -34,6 +34,7 @@ final readonly class Server
         return McpServer::builder()
             ->setSession(new FileSessionStore(ApplicationConfig::baseDir() . '/sessions'))
             ->setServerInfo(ApplicationConfig::appName(), ApplicationConfig::appDescription())
+            ->setDiscovery(ApplicationConfig::baseDir(), ['/Tools', '/Resources', '/Prompts'])
             ->setCapabilities(new ServerCapabilities())
             ->setLogger($logger)
             ->build();
