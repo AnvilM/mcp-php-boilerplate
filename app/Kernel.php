@@ -7,6 +7,7 @@ namespace Application;
 use Application\Bootloaders\Application\ApplicationBootloader;
 use Application\Bootloaders\Context;
 use Application\Bootloaders\Infrastructure\InfrastructureBootloader;
+use DI\Container as DIContainer;
 use DI\DependencyException;
 use DI\NotFoundException;
 use Mcp\Server as McpServer;
@@ -27,17 +28,19 @@ final readonly class Kernel
      *
      *
      *
-     * @throws DependencyException Error while resolving the entry.
+     * @return McpServer Fully configured server instance
      * @throws NotFoundException No entry found for the given name
      *
-     * @return McpServer Fully configured server instance
+     * @throws DependencyException Error while resolving the entry.
      */
     public static function createServer(): McpServer
     {
-        return ApplicationBootloader::boot(
-            InfrastructureBootloader::boot(
-                new Context()
-            )
-        )->get('server');
+        /** @var Context<array{server: McpServer}> $applicationContext */
+        $applicationContext = ApplicationBootloader::boot(new Context([]));
+
+        /** @var Context<array{container: DIContainer}> $infrastructureContext */
+        $infrastructureContext = InfrastructureBootloader::boot($applicationContext);
+        
+        return $infrastructureContext->get('server');
     }
 }
