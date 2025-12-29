@@ -4,36 +4,19 @@ declare(strict_types=1);
 
 namespace Application\Tools;
 
-use Application\Platform\Primitives\AbstractTool;
-use Mcp\Schema\Content\TextContent;
-use Mcp\Schema\JsonRpc\Response;
-use Mcp\Schema\Request\CallToolRequest;
-use Mcp\Schema\Result\CallToolResult;
-use Mcp\Server\Session\SessionInterface;
+use Mcp\Capability\Attribute\McpTool;
+use Psr\Log\LoggerInterface;
 
-final class ExampleTool extends AbstractTool
+final class ExampleTool
 {
-    protected string $name = 'example_tool';
-
-    protected ?string $description = "Example tool that returns 'Hello {name}!'.";
-
-    protected array $inputSchema = [
-        'type' => 'object',
-        'properties' => [
-            'name' => ['type' => 'string']
-        ],
-        'required' => ['name']
-    ];
-
-    public function __invoke(CallToolRequest $request, SessionInterface $session): Response
+    public function __construct(LoggerInterface $logger)
     {
-        return new Response(
-            $request->getId(),
-            new CallToolResult([
-                new TextContent("Hello " . $request->arguments['name'] . "!"),
-            ])
-        );
+        $logger->error('Example tool');
     }
 
-
+    #[McpTool("example_tool", "Just example tool")]
+    public function handle(string $name): string
+    {
+        return "Hello $name";
+    }
 }

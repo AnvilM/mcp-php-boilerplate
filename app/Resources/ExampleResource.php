@@ -4,29 +4,14 @@ declare(strict_types=1);
 
 namespace Application\Resources;
 
-use Application\Platform\Primitives\AbstractResource;
-use Mcp\Schema\Content\TextResourceContents;
-use Mcp\Schema\JsonRpc\Response;
-use Mcp\Schema\Request\ReadResourceRequest;
-use Mcp\Schema\Result\ReadResourceResult;
-use Mcp\Server\Session\SessionInterface;
+use Mcp\Capability\Attribute\McpResource;
 
-final class ExampleResource extends AbstractResource
+final class ExampleResource
 {
-
-    protected string $name = "example_resource";
-
-    protected string $uri = "example://example";
-
-    protected ?string $mimeType = "text/plain";
-
-    public function __invoke(ReadResourceRequest $request, SessionInterface $session): Response
+    #[McpResource("example://example", "example_resource", "Just example resource", "text/plain")]
+    public function handle(): string
     {
-        return new Response(
-            $request->getId(),
-            new ReadResourceResult([
-                new TextResourceContents($this->uri, $this->mimeType, "Example resource"),
-            ]));
+        return "example resource";
     }
 
 }
