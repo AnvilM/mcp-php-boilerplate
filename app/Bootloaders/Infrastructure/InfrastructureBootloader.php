@@ -12,8 +12,7 @@ use DI\Container as DIContainer;
  * Bootloader responsible for setting up the dependency injection container.
  * Starts from an empty context and adds the fully configured DI container.
  *
- * @implements BootloaderInterface<array{}, array{container: DIContainer}
- * >
+ * @implements BootloaderInterface<array{}, array{container: DIContainer}>
  */
 final readonly class InfrastructureBootloader implements BootloaderInterface
 {
