@@ -26,7 +26,7 @@ to LLM-based agents.
 - **Container**: [PHP-DI](https://php-di.org/)
 - **PSR-7**: [nyholm/psr7](https://github.com/Nyholm/psr7)
 - **Logger**: [Monolog](https://seldaek.github.io/monolog/)
-- **Testing**: [PHPUnit](https://phpunit.de/)
+- **Testing**: [Pest](https://pestphp.com/)
 - **Static Analysis**: [PHPStan](https://phpstan.org/)
 
 ## Getting Started
@@ -70,13 +70,11 @@ php entrypoint/stdio.php
 ```
 .
 ├── app/                          # Core application logic and infrastructure
-│   ├── Bootstrappers/            # Classes for initializing application components
+│   ├── Bootloaders/            # Classes for initializing application components
 │   ├── Config/                   # Configuration files
 │   ├── Tools/                    # MCP Tools definitions
 │   ├── Resources/                # MCP resources definitions
 │   ├── Prompts/                  # MCP prompts definitions
-│   ├── Platform/                 # Core abstractions and handlers
-│   ├── Registry/                 # Registration of all available prompts/tools/resources and providers
 │   ├── Providers/                # Dependency injection container providers
 │   │   ├── ApplicationProviders/ # Providers for application functionality
 │   │   └── Providers/            # Custom providers
@@ -84,9 +82,8 @@ php entrypoint/stdio.php
 ├── entrypoint/
 │   ├── http.php                  # HTTP entry point
 │   └── stdio.php                 # Stdio (stdin/stdout) entry point
-├── logs/                         # Application logs
 ├── src/                          # Source code for custom logic
-└── tests/                        # PHPUnit tests
+└── tests/                        # Pest tests
 ```
 
 ### Directory Organization
@@ -94,8 +91,8 @@ php entrypoint/stdio.php
 The boilerplate is structured to separate infrastructural logic from user-defined code:
 
 - **Directory `app/`**: Contains the core infrastructure of the application,
-  including [configurations](#configuration), [providers](#providers), [tools](#tools-resources-prompts), [resources](#tools-resources-prompts),
-  and [bootstrappers](#bootstrappers). This directory is intended for foundational application setup and operation.
+  including [configurations](#configuration), [providers](#providers), [tools](#tools), [resources](#resources), [prompts](#prompts)
+  and [bootloaders](#bootloaders). This directory is intended for foundational application setup and operation.
 - **Directory `src/`**: Designated for user-defined source code, where developers can implement the primary business
   logic of the application.
 
@@ -106,8 +103,9 @@ classes with static methods. For further details, refer to the [Configuration](#
 
 #### Environment Variables
 
-Environment variables are managed using the [oscarotero/env](https://github.com/oscarotero/env) library. These variables
-are read directly from the system, not from a `.env` file, and are intended for use within configuration classes.
+Environment variables are loaded from a `.env` file in the project root during the bootstrapping process (specifically within the `InfrastructureBootloader`).
+
+After loading, all variables are available globally via the `$_ENV` superglobal array.
 
 Predefined environment variables:
 
@@ -115,6 +113,8 @@ Predefined environment variables:
 - **APP_DEBUG**: Enables or disables debug mode, influencing the display of detailed error information.
 - **APP_NAME**: Name of the application.
 - **APP_DESCRIPTION**: Short description of the application.
+
+Additional custom variables can be added as needed.
 
 #### Application Configuration
 
@@ -158,185 +158,69 @@ final readonly class ApplicationConfig
 
 ### Tools
 
-Tools are defined in the `app/Tools/` directory. Each tool class must extend the abstract class `AbstractTool` and be
-[registered](#tools-1) in the `app/Registry/Tools.php` file.
-
-#### Required Implementation Elements
-
-Every tool must define the following properties:
-
-- **Tool Name**: `protected string $name`
-- **Input Parameters Schema**: `protected array $inputSchema`
-
-#### Optional Elements
-
-The following properties may be defined to provide additional information:
-
-- **Description**: `protected ?string $description`
-
-- **Icons**: `protected ?array $icons`
-
-- **Metadata**: `protected ?array $meta`
-
-- **Tool Annotations**: To specify tool annotations , the `protected getAnnotations()` method can be overridden. It
-  should return an instance
-  of `Mcp\Schema\ToolAnnotations` or `null` if no annotations are needed.
+Tools are defined in the `app/Tools/` directory.
 
 Example of creating a tool:
 
 ```php
-namespace App\Tools;
+namespace Application\Tools;
 
-final class ExampleTool extends AbstractTool
+use Mcp\Capability\Attribute\McpTool;
+
+class ExampleTool
 {
-    protected string $name = 'example_tool';
-
-    protected ?string $description = "Example tool that returns 'Hello {name}!'.";
-
-    protected array $inputSchema = [
-        'type' => 'object',
-        'properties' => [
-            'name' => ['type' => 'string']
-        ],
-        'required' => ['name']
-    ];
-
-    public function __invoke(CallToolRequest $request, SessionInterface $session): Response|Error
+    #[McpTool("example_tool", "Example tool description")]
+    public function handle(string $name): string
     {
-        return new Response(
-            $request->getId(),
-            new CallToolResult([
-                new TextContent("Hello " . $request->arguments['name'] . "!"),
-            ])
-        );
+        return "Hello $name";
     }
 }
-```
-
-Example of tool [registration](#tools-1) in `app/Registry/Tools.php`:
-
-```php
-public static array $tools = [
-    ExampleTool::class
-    // Other tools...
-];
 ```
 
 ### Resources
 
-Resources are defined in the `app/Resources/` directory. Each resource class must extend the abstract class
-`AbstractResource` and be [registered](#resources-1) in the `app/Registry/Resources.php` file.
-
-#### Required Implementation Elements
-
-Every resource must define the following properties:
-
-- **Resource Name**: `protected string $name`
-- **Resource URI**: `protected string $uri`
-
-#### Optional Elements
-
-The following properties may be defined to provide additional information:
-
-- **Description**: `protected ?string $description`
-- **MIME Type**: `protected ?string $mimeType`
-- **Size**: `protected ?int $size`
-- **Icons**: `protected ?array $icons`
-- **Metadata**: `protected ?array $meta`
-- **Resource Annotations**: To specify resource annotations, the `getAnnotations()` method can be overridden. It should
-  return an instance of `Mcp\Schema\ResourceAnnotations` or `null` if no annotations are needed.
+Resources are defined in the `app/Resources/` directory.
 
 Example of creating a resource:
 
 ```php
-namespace App\Resources;
+namespace Application\Resources;
 
-final class ExampleResource extends AbstractResource
+use Mcp\Capability\Attribute\McpResource;
+
+final class ExampleResource
 {
-    protected string $name = 'example_resource';
-
-    protected string $uri = 'example://example';
-
-    protected ?string $mimeType = 'text/plain';
-
-    public function __invoke(ReadResourceRequest $request, SessionInterface $session): Response|Error
+    #[McpResource("example://example", "example_resource", "Example resource description", "text/plain")]
+    public function handle(): string
     {
-        return new Response(
-            $request->getId(),
-            new ReadResourceResult([
-                new TextResourceContents(
-                    $this->uri,
-                    $this->mimeType,
-                    'Example resource content'
-                ),
-            ])
-        );
+        return "example resource";
     }
+
 }
-```
-
-Example of resource [registration](#resources-1) in `app/Registry/Resources.php`:
-
-```php
-public static array $resources = [
-    ExampleResource::class,
-    // Other resources...
-];
 ```
 
 ### Prompts
 
-Prompts are defined in the `app/Prompts/` directory. Each prompt class must extend the abstract class `AbstractPrompt`
-and be [registered](#prompts-1) in the `app/Registry/Prompts.php` file.
-
-#### Required Implementation Elements
-
-Every prompt must define the following property:
-
-- **Prompt Name**: `protected string $name`
-
-#### Optional Elements
-
-The following properties may be defined to provide additional information:
-
-- **Description**: `protected ?string $description`
-- **Arguments**: `protected ?array $arguments`
-- **Icons**: `protected ?array $icons`
-- **Metadata**: `protected ?array $meta`
+Prompts are defined in the `app/Prompts/` directory.
 
 Example of creating a prompt:
 
 ```php
-namespace App\Prompts;
+namespace Application\Prompts;
 
-use App\Prompts\AbstractPrompt;
+use ...
 
-final class ExamplePrompt extends AbstractPrompt
+final class ExamplePrompt
 {
-    protected string $name = 'example_prompt';
-
-    public function __invoke(GetPromptRequest $request, SessionInterface $session): Response|Error
+    #[McpPrompt("example_prompt")]
+    public function handle(): PromptMessage
     {
-        return new Response(
-            $request->getId(),
-            new GetPromptResult([
-                new PromptMessage(
-                    Role::User,
-                    new TextContent('example_message')
-                )
-            ])
+        return new PromptMessage(
+            Role::User,
+            new TextContent("example prompt message"),
         );
     }
 }
-```
-
-Example of prompt [registration](#prompts-1) in `app/Registry/Prompts.php`:
-
-```php
-public static array $prompts = [
-    ExamplePrompt::class,
-    // Other prompts...
-];
 ```
 
 ### Providers
@@ -344,11 +228,12 @@ public static array $prompts = [
 Service providers, located in the `app/Providers/` directory, are responsible for registering dependencies in the PHP-DI
 container, making them accessible to the application. Providers are categorized as follows:
 
-- `ApplicationProviders/`: Providers essential for application functionality. They are loaded first.
+- `ApplicationProviders/`: Providers essential for application functionality. **They are loaded first.**
 - `Providers/`: Custom providers for specific logic.
 
-Each provider must implement the `ProviderInterface` and be [registered](#providers-1) in the
-`app/Registry/Providers.php` file
+Each provider must implement the `ProviderInterface` and be registered in the `app/Providers/Registry.php` file.
+
+ApplicationProviders must be registered in the `$appProviders` array, other Providers in the `$providers` array.
 
 Example of creating a provider:
 
@@ -368,7 +253,7 @@ final readonly class DBALProvider implements ProviderInterface
 }
 ```
 
-Example of [registration](#providers-1) in `app/Registry/Providers.php`):
+Example of registration in the `app/Providers/Registry.php` file:
 
 ```php
 private static array $appProviders = [
@@ -377,110 +262,110 @@ private static array $appProviders = [
 ];
 
 private static array $providers = [
-    // Custom providers
+    // Other providers
 ];
 ```
 
-### Bootstrappers
+### Bootloaders
 
-Bootstrapper classes in the `app/Bootstrappers/` directory initialize key application components. The primary
-bootstrappers are:
+The application bootstrapping process is divided into distinct stages to ensure a scalable, ordered, and predictable
+initialization of components. Each stage is managed by a dedicated bootloader, allowing components to be loaded
+sequentially rather than in a single monolithic location.
 
-- `ServerBootstrapper`: Initializes the MCP server.
-- `ContainerBootstrapper`: Configures the PHP-DI container.
-- `ProvidersBootstrapper`: Initializes [providers](#providers).
-- `ToolsBootstrapper`: Initializes [tools](#tools).
-- `ResourcesBootstrapper`:Initializes [resources](#resources)
-- `PromptsBootstrapper`: Initializes [prompts](#prompts)
+All bootloaders are located in the `app/Bootloaders/` directory and must implement the `BootloaderInterface`. The
+`Kernel` class defines the execution order of these stages and orchestrates the entire bootstrapping process.
 
-The `Kernel.php` file manages the initialization process.
+#### Directory Structure
 
-## Registry
+```
+app/Bootloaders/
+├── Application/
+│   ├── ApplicationBootloader.php
+│   └── Server.php
+├── Infrastructure/
+│   ├── Container.php
+│   ├── Providers.php
+│   ├── Environment.php
+│   └── InfrastructureBootloader.php
+├── BootloaderInterface.php
+└── Context.php
+```
 
-The Registry is the central place for registering all core components that your application exposes to MCP-based agents.
-It ensures that Tools, Resources, Prompts, and Providers are recognized by the system and can be initialized
-automatically via the bootstrappers.
+#### Boot Sequence
 
-The `app/Registry` directory contains four key files:
+The bootloaders are executed in the following order:
 
-- Providers.php
-- Resources.php
-- Tools.php
-- Prompts.php
+1. **InfrastructureBootloader**  
+   Configures core infrastructure components, including the PHP-DI container and environment variables.
 
-Each file defines a static array of class references that the application uses to bootstrap and manage components.
+2. **ApplicationBootloader**  
+   Initializes the MCP server and other application-level components.
 
-### Providers
+Additional bootloaders can be inserted at appropriate positions in the sequence as the application evolves.
 
-Service providers are responsible for registering dependencies in the PHP-DI container. Providers are categorized into:
+#### Extending the Boot Process
 
-1. **Application Providers** (`$appProviders`) – essential for the core functionality of the application and loaded
-   first.
+To add a new bootloader:
 
-2. **Custom Providers** (`$providers`) – optional, used for registering application-specific services.
+1. Create a new directory and class under `app/Bootloaders/`, for example: `app/Bootloaders/OneMoreBootloader/OneMoreBootloader.php`
 
-#### Example:
+2. Implement the `BootloaderInterface` in the new class:
 
 ```php
-final class Providers
-{
-    /** @var array<class-string<ProviderInterface>> */
-    public static array $providers = [];
+<?php
+namespace Application\Bootloaders\OneMoreBootloader;
 
-    /** @var array<class-string<ProviderInterface>> */
-    public static array $appProviders = [
-        LoggerProvider::class
-    ];
+...
+
+/**
+ * @implements BootloaderInterface<array{container: DiContainer}, array{container: DIContainer}>
+ */
+class OneMoreBootloader implements BootloaderInterface
+{
+    /**
+     * @param Context<array{container: DiContainer}> $context
+     * @return Context<array{container: DIContainer}>
+     */
+    public static function boot(Context $context): Context
+    {
+        $context->get('container')->get(LoggerInterface::class)->debug("OneMoreBootloader: booted");
+        
+        return new Context(['container' => $context->get('container')]);
+    }
 }
 ```
 
-**Usage:** Each provider must implement `ProviderInterface` and define a `register()` method returning an array of class
-bindings.
-
-### Resources
-
-Resources represent any external or internal content your agent can access. Each resource class must extend
-`AbstractResource` and be registered in `app/Registry/Resources.php`:
+3. Register the new bootloader in the `Kernel` class by adding it to the bootloaders array in the correct position:
 
 ```php
-final class Resources
+namespace Application;
+
+...
+
+final readonly class Kernel
 {
-    /** @var array<class-string<AbstractResource>> */
-    public static array $resources = [
-        ExampleResource::class
-    ];
+    
+    ...
+    
+    public static function createServer(): McpServer
+    {
+        /** @var Context<array{container: DIContainer}> $infrastructureContext */
+        $infrastructureContext = InfrastructureBootloader::boot(new Context());
+
+        /** @var Context<array{container: DIContainer}> $oneMoreBootloaderContext */
+        $oneMoreBootloaderContext = OneMoreBootloader::boot($infrastructureContext);
+
+        /** @var Context<array{server: McpServer}> $applicationContext */
+        $applicationContext = ApplicationBootloader::boot($oneMoreBootloaderContext);
+
+
+        return $applicationContext->get('server');
+    }
 }
 ```
 
-### Tools
-
-Tools are encapsulated units of functionality that your agent can call. Each tool class must extend `AbstractTool` and
-be registered in `app/Registry/Tools.php`:
-
-```php
-final class Tools
-{
-    /** @var array<class-string<AbstractTool>> */
-    public static array $tools = [
-        ExampleTool::class
-    ];
-}
-```
-
-### Prompts
-
-Prompts define reusable LLM message templates. Each prompt class must extend `AbstractPrompt` and be registered in
-`app/Registry/Prompts.php`:
-
-```php
-final class Prompts
-{
-    /** @var array<class-string<AbstractPrompt>> */
-    public static array $prompts = [
-        ExamplePrompt::class
-    ];
-}
-```
+This approach ensures that new functionality can be introduced in a controlled manner without disrupting existing
+initialization logic.
 
 ## License
 
