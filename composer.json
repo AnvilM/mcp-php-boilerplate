@@ -1,6 +1,6 @@
 {
-  "name": "anvil/mcp-rr-boilerplate",
-  "description": "MCP RoadRunner boilerplate",
+  "name": "anvil/mcp-php-boilerplate",
+  "description": "MCP PHP boilerplate",
   "type": "project",
   "license": "MIT",
   "authors": [
@@ -23,19 +23,24 @@
   "minimum-stability": "stable",
   "prefer-stable": true,
   "require": {
+    "php": "^8.5",
     "monolog/monolog": "^3.9",
     "php-di/php-di": "^7.1",
-    "mcp/sdk": "^0.2.0",
+    "mcp/sdk": "^0.2",
     "nyholm/psr7": "^1.8",
-    "nyholm/psr7-server": "^1.1"
+    "nyholm/psr7-server": "^1.1",
+    "laminas/laminas-httphandlerrunner": "^2.13",
+    "vlucas/phpdotenv": "^5.6"
   },
   "require-dev": {
+    "pestphp/pest": "^4.2",
     "phpstan/phpstan": "^2.1",
-    "phpunit/phpunit": "^12.5"
+    "friendsofphp/php-cs-fixer": "^3.92"
   },
   "config": {
     "allow-plugins": {
-      "php-http/discovery": true
+      "php-http/discovery": true,
+      "pestphp/pest-plugin": true
     }
   }
 }
