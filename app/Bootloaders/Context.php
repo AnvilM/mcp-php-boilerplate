@@ -32,16 +32,6 @@ final readonly class Context
     }
 
     /**
-     * Returns the full data array stored in the context.
-     *
-     * @return T The complete data array with all keys and values added so far
-     */
-    public function getData(): array
-    {
-        return $this->data;
-    }
-
-    /**
      * Retrieves a value from the context by key.
      * Throws if the key does not exist — this ensures type safety via PHPStan.
      *
@@ -60,25 +50,5 @@ final readonly class Context
         }
 
         return $this->data[$key];
-    }
-
-    /**
-     * Returns a new immutable context with an additional or updated key-value pair.
-     * The returned context has an extended type that includes the new key and value type.
-     *
-     * @template K as string
-     * @template V as mixed
-     *
-     * @param K $key The key to add or update
-     * @param V $value The value to associate with the key
-     *
-     * @return Context<array{K: V}&T> A new context instance with the added/updated key
-     */
-    public function with(string $key, mixed $value): self
-    {
-        /** @var Context<array{K: V}&T> $newContext */
-        $newContext = new self([...$this->data, $key => $value]);
-
-        return $newContext;
     }
 }
