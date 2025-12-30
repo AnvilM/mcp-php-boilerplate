@@ -268,12 +268,9 @@ private static array $providers = [
 
 ### Bootloaders
 
-The application bootstrapping process is divided into distinct stages to ensure a scalable, ordered, and predictable
-initialization of components. Each stage is managed by a dedicated bootloader, allowing components to be loaded
-sequentially rather than in a single monolithic location.
+The application bootstrapping process is divided into distinct stages to ensure a scalable, ordered, and predictable initialization of components. Each stage is managed by a dedicated bootloader, allowing components to be loaded sequentially rather than in a single monolithic location.
 
-All bootloaders are located in the `app/Bootloaders/` directory and must implement the `BootloaderInterface`. The
-`Kernel` class defines the execution order of these stages and orchestrates the entire bootstrapping process.
+All bootloaders are located in the `app/Bootloaders/` directory and must implement the `BootloaderInterface`. The `Kernel` class orchestrates the entire bootstrapping process by executing bootloaders in a strictly defined order.
 
 #### Directory Structure
 
@@ -285,8 +282,9 @@ app/Bootloaders/
 ├── Infrastructure/
 │   ├── Container.php
 │   ├── Providers.php
-│   ├── Environment.php
 │   └── InfrastructureBootloader.php
+├── Environment/
+│   └── EnvironmentBootloader.php
 ├── BootloaderInterface.php
 └── Context.php
 ```
@@ -295,10 +293,13 @@ app/Bootloaders/
 
 The bootloaders are executed in the following order:
 
-1. **InfrastructureBootloader**  
-   Configures core infrastructure components, including the PHP-DI container and environment variables.
+1. **EnvironmentBootloader**  
+   Loads environment variables from the `.env` file in the project root.
 
-2. **ApplicationBootloader**  
+2. **InfrastructureBootloader**  
+   Configures core infrastructure components, including the PHP-DI container and service providers.
+
+3. **ApplicationBootloader**  
    Initializes the MCP server and other application-level components.
 
 Additional bootloaders can be inserted at appropriate positions in the sequence as the application evolves.
@@ -307,65 +308,63 @@ Additional bootloaders can be inserted at appropriate positions in the sequence 
 
 To add a new bootloader:
 
-1. Create a new directory and class under `app/Bootloaders/`, for example: `app/Bootloaders/OneMoreBootloader/OneMoreBootloader.php`
+1. Create a new directory and class under `app/Bootloaders/`, for example:  
+   `app/Bootloaders/OneMoreBootloader/OneMoreBootloader.php`
 
-2. Implement the `BootloaderInterface` in the new class:
+2. Implement the `BootloaderInterface` in the new class. Bootloaders are expected to be static, receive a `Context` object, perform configuration, and return a (possibly updated) `Context`:
 
 ```php
 <?php
-namespace Application\Bootloaders\OneMoreBootloader;
 
-...
+namespace App\Bootloaders\OneMoreBootloader;
 
 /**
- * @implements BootloaderInterface<array{container: DiContainer}, array{container: DIContainer}>
+ * @implements BootloaderInterface<array{container: DIContainer}, array{container: DIContainer}>
  */
 class OneMoreBootloader implements BootloaderInterface
 {
     /**
-     * @param Context<array{container: DiContainer}> $context
+     * @param Context<array{container: DIContainer}> $context
      * @return Context<array{container: DIContainer}>
      */
     public static function boot(Context $context): Context
     {
         $context->get('container')->get(LoggerInterface::class)->debug("OneMoreBootloader: booted");
-        
+
         return new Context(['container' => $context->get('container')]);
     }
 }
 ```
 
-3. Register the new bootloader in the `Kernel` class by adding it to the bootloaders array in the correct position:
+3. Register the new bootloader in the `Kernel::createServer()` method by chaining it in the correct position:
 
 ```php
-namespace Application;
+namespace App;
 
-...
+use App\Bootloaders\Context;
 
 final readonly class Kernel
 {
-    
-    ...
-    
     public static function createServer(): McpServer
     {
-        /** @var Context<array{container: DIContainer}> $infrastructureContext */
-        $infrastructureContext = InfrastructureBootloader::boot(new Context());
+        /** @var Context<array{}> $environmentContext */
+        $environmentContext = EnvironmentBootloader::boot(new Context());
 
-        /** @var Context<array{container: DIContainer}> $oneMoreBootloaderContext */
-        $oneMoreBootloaderContext = OneMoreBootloader::boot($infrastructureContext);
+        /** @var Context<array{container: DIContainer}> $infrastructureContext */
+        $infrastructureContext = InfrastructureBootloader::boot($environmentContext);
+
+        /** @var Context<array{container: DIContainer}> $oneMoreContext */
+        $oneMoreContext = OneMoreBootloader::boot($infrastructureContext);
 
         /** @var Context<array{server: McpServer}> $applicationContext */
-        $applicationContext = ApplicationBootloader::boot($oneMoreBootloaderContext);
-
+        $applicationContext = ApplicationBootloader::boot($oneMoreContext);
 
         return $applicationContext->get('server');
     }
 }
 ```
 
-This approach ensures that new functionality can be introduced in a controlled manner without disrupting existing
-initialization logic.
+This chained, explicit approach ensures full control over the initialization order and makes dependencies between stages transparent.
 
 ## License
 
