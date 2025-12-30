@@ -38,7 +38,7 @@ final readonly class Kernel
     {
         /** @var Context<array{}> $environmentContext */
         $environmentContext = EnvironmentBootloader::boot(new Context());
-        
+
         /** @var Context<array{container: DIContainer}> $infrastructureContext */
         $infrastructureContext = InfrastructureBootloader::boot($environmentContext);
 

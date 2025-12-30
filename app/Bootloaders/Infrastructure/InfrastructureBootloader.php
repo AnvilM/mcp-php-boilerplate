@@ -28,7 +28,7 @@ final readonly class InfrastructureBootloader implements BootloaderInterface
         $container = Container::createContainer(
             Providers::getProviders()
         );
-        
+
         return new Context([
             "container" => $container,
         ]);
