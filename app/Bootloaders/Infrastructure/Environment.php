@@ -19,7 +19,6 @@ final readonly class Environment
      * Loads environment variables from the .env file.
      *
      * Uses safeLoad(), so no error is thrown if the .env file is missing.
-     *
      */
     public static function load(): void
     {

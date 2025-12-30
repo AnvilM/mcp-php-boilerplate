@@ -25,6 +25,7 @@ return new Config()
         'phpdoc_types_order' => true,
         'strict_param' => true,
         'phpdoc_separation' => true,
+        'phpdoc_trim' => true,
     ])
     ->setFinder($finder)
     ->setRiskyAllowed(true)
