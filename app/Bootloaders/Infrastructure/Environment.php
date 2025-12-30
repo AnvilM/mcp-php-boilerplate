@@ -20,7 +20,6 @@ final readonly class Environment
      *
      * Uses safeLoad(), so no error is thrown if the .env file is missing.
      *
-     * @return void
      */
     public static function load(): void
     {

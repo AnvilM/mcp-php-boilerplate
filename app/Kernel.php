@@ -28,10 +28,10 @@ final readonly class Kernel
      *
      *
      *
-     * @return McpServer Fully configured server instance
      * @throws NotFoundException No entry found for the given name
-     *
      * @throws DependencyException Error while resolving the entry.
+     *
+     * @return McpServer Fully configured server instance
      */
     public static function createServer(): McpServer
     {
