@@ -6,6 +6,7 @@ namespace Application;
 
 use Application\Bootloaders\Application\ApplicationBootloader;
 use Application\Bootloaders\Context;
+use Application\Bootloaders\Environment\EnvironmentBootloader;
 use Application\Bootloaders\Infrastructure\InfrastructureBootloader;
 use DI\Container as DIContainer;
 use DI\DependencyException;
@@ -35,8 +36,11 @@ final readonly class Kernel
      */
     public static function createServer(): McpServer
     {
+        /** @var Context<array{}> $environmentContext */
+        $environmentContext = EnvironmentBootloader::boot(new Context());
+
         /** @var Context<array{container: DIContainer}> $infrastructureContext */
-        $infrastructureContext = InfrastructureBootloader::boot(new Context());
+        $infrastructureContext = InfrastructureBootloader::boot($environmentContext);
 
         /** @var Context<array{server: McpServer}> $applicationContext */
         $applicationContext = ApplicationBootloader::boot($infrastructureContext);
